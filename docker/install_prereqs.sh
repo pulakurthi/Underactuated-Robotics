@@ -51,7 +51,7 @@ if [[ "$(lsb_release -cs)" != 'jammy' ]]; then
 fi
 
 apt-get install -o APT::Acquire::Retries=4 -o Dpkg::Use-Pty=0 -qy \
-  --no-install-recommends ca-certificates gnupg
+  --no-install-recommends ca-certificates gnupg curl
 
 apt-get update -qq || (sleep 15; apt-get update -qq)
 

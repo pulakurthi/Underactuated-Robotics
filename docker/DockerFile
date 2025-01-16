@@ -16,7 +16,7 @@
 
 FROM robotlocomotion/drake:jammy
 ARG DEBIAN_FRONTEND=noninteractive
-ENV SHELL /bin/bash
+ENV SHELL=/bin/bash
 # Open ports for meshcat:
 EXPOSE 7000-7099/tcp
 EXPOSE 8888/tcp
@@ -27,14 +27,17 @@ LABEL org.opencontainers.image.source="https://github.com/RussTedrake/underactua
 LABEL org.opencontainers.image.title="Underactuated Robotics"
 LABEL org.opencontainers.image.url="https://underactuated.csail.mit.edu/"
 LABEL org.opencontainers.image.vendor="Massachusetts Institute of Technology"
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 COPY requirements.txt /tmp/requirements.txt
 COPY pip.conf /root/.config/pip/pip.conf
 COPY install_prereqs.sh /tmp/
 RUN /tmp/install_prereqs.sh
-RUN apt -y install xvfb git nginx-light curl
+RUN apt --no-install-recommends -o Dpkg::Use-Pty=0 -qy install xvfb git nginx-light \
+# Make python and pip available to meet the requirements for deepnote.com:
+# https://docs.deepnote.com/environment/custom-environments#custom-image-requirements
+  python3-pip python-is-python3
 # We still pip install the requirements, because otherwise deepnote will
 # install old versions of e.g. scipy which cannot be upgraded in the
 # Init notebook.  Drake is also installed in /opt/drake, but is not used (since 
